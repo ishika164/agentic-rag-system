@@ -79,6 +79,8 @@ Place your PDF or `.txt` files inside the `docs/` folder.
 python main.py
 ```
 
+> ⚠️ **Note:** First run will download the embedding model (~90MB). This is normal and only happens once! Subsequent runs will be much faster.
+
 ---
 
 ## CLI Commands
