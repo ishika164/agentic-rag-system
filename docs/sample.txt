@@ -1,0 +1,5 @@
+Artificial Intelligence (AI) is the simulation of human intelligence by machines.
+Machine Learning is a subset of AI where systems learn from data.
+Deep Learning uses neural networks with many layers to learn complex patterns.
+Large Language Models (LLMs) are trained on massive text datasets to generate human-like text.
+RAG stands for Retrieval Augmented Generation — it combines document search with LLM generation.
