@@ -1,5 +1,63 @@
-Artificial Intelligence (AI) is the simulation of human intelligence by machines.
-Machine Learning is a subset of AI where systems learn from data.
-Deep Learning uses neural networks with many layers to learn complex patterns.
-Large Language Models (LLMs) are trained on massive text datasets to generate human-like text.
-RAG stands for Retrieval Augmented Generation — it combines document search with LLM generation.
+Introduction to Artificial Intelligence and Machine Learning
+
+Artificial Intelligence (AI) is the simulation of human intelligence by machines. 
+AI systems can perform tasks that typically require human intelligence such as 
+visual perception, speech recognition, decision making, and language translation.
+
+Machine Learning is a subset of AI where systems automatically learn and improve 
+from experience without being explicitly programmed. Instead of writing rules, 
+we feed data to algorithms and let them learn the patterns themselves.
+
+Types of Machine Learning:
+1. Supervised Learning - learns from labeled training data
+2. Unsupervised Learning - finds patterns in unlabeled data
+3. Reinforcement Learning - learns through rewards and penalties
+
+Deep Learning is a subset of Machine Learning that uses neural networks with 
+many layers. It is particularly powerful for image recognition, speech processing, 
+and natural language understanding. Deep Learning models require large amounts 
+of data and computing power.
+
+Large Language Models (LLMs) are AI models trained on massive text datasets. 
+They can generate human-like text, answer questions, summarize documents, 
+translate languages, and write code. Examples include GPT-4, Claude, and Llama.
+
+RAG (Retrieval Augmented Generation) is a technique that combines document 
+retrieval with LLM generation. Instead of relying only on training data, RAG 
+systems search a knowledge base for relevant information and use it as context 
+for the LLM to generate accurate, grounded answers.
+
+How RAG Works:
+1. Documents are split into chunks and stored in a vector database
+2. User query is converted to an embedding vector
+3. Similar chunks are retrieved using cosine similarity
+4. Retrieved chunks are passed as context to the LLM
+5. LLM generates a grounded answer based on the context
+
+Vector Databases store embeddings — numerical representations of text. 
+ChromaDB is a popular open-source vector database that supports local 
+persistence and integrates natively with LangChain.
+
+Embeddings are numerical representations of text that capture semantic meaning. 
+Similar texts have similar embeddings. The sentence-transformers library provides 
+free, high-quality embeddings that run locally without any API key.
+
+LangChain is a framework for building applications with Large Language Models. 
+It provides tools for document loading, text splitting, embeddings, vector stores, 
+prompt templates, and chains. LangChain Expression Language (LCEL) allows 
+composing these components in a clean, readable way.
+
+Agentic AI systems can make decisions and take actions autonomously. Unlike 
+simple chatbots, agentic systems can decide which tools to use, when to search 
+for information, and how to handle complex multi-step tasks.
+
+Prompt Engineering is the practice of designing effective prompts for LLMs. 
+Good prompts are clear, specific, and provide necessary context. Techniques 
+include chain-of-thought prompting, few-shot examples, and role assignment.
+
+Limitations of RAG Systems:
+- Retrieval quality depends on embedding model quality
+- Chunking strategy affects what information is retrievable
+- LLMs can still hallucinate even with retrieved context
+- Memory is limited to the context window size
+- Performance depends on the quality of the knowledge base
