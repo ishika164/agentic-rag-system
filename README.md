@@ -122,32 +122,78 @@ You ▶ Tell me more about that
 
 ## Design Decisions
 
-### 1. LLM-based routing
-Used an LLM classifier to decide RAG vs DIRECT instead of keywords.
-This handles follow-up questions and paraphrasing correctly.
+### 1. LLM-based routing (not keyword matching)
+Used an LLM classifier with `temperature=0` to decide RAG vs DIRECT.
+This handles paraphrasing and follow-up questions correctly — something
+keyword matching can't do. Falls back to RAG if unsure — better to
+retrieve unnecessarily than miss relevant context.
 
-### 2. Free & Fast LLM — Groq
-Used Groq (free tier) with `llama-3.3-70b-versatile` model instead
-of paid OpenAI. Fast and completely free for testing.
+### 2. Chunk size of 1000 with overlap of 150
+Chunk size of 1000 characters balances context richness and retrieval
+precision. The overlap of 150 ensures no information is lost at chunk
+boundaries. Smaller chunks improve retrieval accuracy but lose context,
+larger chunks reduce precision.
 
-### 3. Free Embeddings — HuggingFace
-Used `sentence-transformers/all-MiniLM-L6-v2` for embeddings.
-No API key needed, runs locally.
+### 3. Top-k retrieval of 4 chunks
+Retrieving 4 chunks gives enough context without overwhelming the LLM
+prompt. Too few chunks miss relevant information, too many add noise
+and increase hallucination risk.
 
-### 4. Safe routing default
-If classifier is unsure, defaults to RAG to never miss context.
+### 4. ChromaDB for vector storage
+ChromaDB was chosen because it supports local persistence with no
+external server needed, integrates natively with LangChain, and is
+lightweight enough for development and testing.
 
-### 5. Sliding window memory
-Keeps last 3 conversation pairs using a deque for O(1) performance.
+### 5. HuggingFace embeddings (free, local)
+Used `sentence-transformers/all-MiniLM-L6-v2` — completely free,
+runs locally, no API key needed. Good balance of speed and accuracy
+for semantic search.
+
+### 6. Groq as LLM provider (free)
+Groq provides free, fast inference for open-source models. Used
+`llama-3.3-70b-versatile` which is powerful enough for RAG tasks
+without any cost.
+
+### 7. Sliding window memory with deque
+Used Python's `deque(maxlen=window*2)` for O(1) append and automatic
+eviction. Keeps last 3 conversation pairs — enough for follow-up
+context without overloading the prompt.
+
+### 8. Prompt injection defence
+Retrieved context is wrapped in `<context>` XML tags with explicit
+system instruction to treat it as data only — protects against
+malicious content in documents.
 
 ---
 
 ## Limitations
 
-- Memory resets when you restart the program
-- Only supports PDF and TXT files currently
-- No streaming — answers appear all at once
-- Single user only
+### Current limitations:
+- **Memory resets on restart** — conversation history is in-memory only.
+  Production fix: persist to Redis or a database.
+
+- **No confidence scoring** — the router returns RAG or DIRECT but
+  doesn't provide a confidence score. Could misclassify ambiguous queries.
+
+- **No reranking** — chunks are retrieved by cosine similarity only.
+  Adding a cross-encoder reranker would improve precision.
+
+- **No context summarization** — long conversations may exceed the LLM
+  context window. Fix: summarize older turns instead of dropping them.
+
+- **Retrieval depends on embedding quality** — if the query is phrased
+  very differently from the document, retrieval may miss relevant chunks.
+
+- **Single user only** — no session management for multiple concurrent users.
+
+- **No ingestion deduplication** — re-ingesting the same file adds
+  duplicate chunks to ChromaDB.
+
+### Edge cases handled:
+- ✅ No chunks retrieved → falls back to direct LLM answer
+- ✅ Unexpected router output → defaults to RAG safely
+- ✅ Empty user input → ignored, prompts again
+- ✅ Keyboard interrupt → exits gracefully
 
 ---
 
