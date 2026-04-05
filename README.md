@@ -15,32 +15,27 @@ routing built with LangChain, ChromaDB, and Groq (free LLM).
 ---
 
 ## Project Structure
-
+```
 agentic_rag/
 ├── main.py                  # Entry point
 ├── config.py                # All configuration
 ├── requirements.txt         # Dependencies
 ├── .env                     # Your API key (not committed)
-│
 ├── rag/
 │   ├── ingestion.py         # Load → chunk → embed → store
 │   ├── retriever.py         # Search relevant chunks
 │   └── chain.py             # Generate answers with LLM
-│
 ├── agent/
 │   ├── decision.py          # Decide RAG vs DIRECT
 │   └── orchestrator.py      # Connect everything
-│
 ├── memory/
 │   └── conversation.py      # Remember last 3 conversations
-│
 ├── cli/
 │   └── interface.py         # Interactive CLI
-│
 ├── utils/
 │   └── logging_setup.py     # Logging
-│
 └── docs/                    # Put your documents here
+```
 
 ---
 
@@ -99,7 +94,7 @@ python main.py
 ---
 
 ## Example Session
-
+```
 You ▶ What is RAG?
 │  RAG stands for Retrieval Augmented Generation. It combines
 │  document search with LLM generation to give grounded answers.
@@ -107,18 +102,21 @@ You ▶ What is RAG?
 │  Routing     : RAG
 │  Retrieval   : Yes
 │  Sources     : sample.txt
+
 You ▶ What is the capital of France?
 │  The capital of France is Paris.
 ├─ Metadata
 │  Routing     : DIRECT
 │  Retrieval   : No
 │  Sources     : —
+
 You ▶ Tell me more about that
 │  (uses memory of previous exchange)
 ├─ Metadata
 │  Routing     : DIRECT
 │  Retrieval   : No
 │  Sources     : —
+```
 
 ---
 
