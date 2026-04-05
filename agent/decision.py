@@ -20,14 +20,30 @@ class RoutingDecision(str, Enum):
 CLASSIFIER_SYSTEM = """\
 You are a routing classifier for a RAG system.
 
-Given a user query and conversation history, decide:
+Given a user query and conversation history, analyze carefully and decide:
 
-  RAG    → query needs searching a document
-           (e.g. "What does the document say?", "Summarise the report",
-            "According to the file...", follow-ups about the document)
+  RAG    → query needs searching a private document corpus
+           Examples:
+           - "What does the document say about X?"
+           - "Summarise the report"
+           - "According to the file..."
+           - Follow-up questions about document content
+           - Any question that references "the document", "the file", "according to..."
 
-  DIRECT → can be answered from general knowledge
-           (e.g. "What is machine learning?", "Tell me a joke")
+  DIRECT → can be answered from general world knowledge
+           Examples:
+           - "What is machine learning?"
+           - "Tell me a joke"
+           - "What is the capital of France?"
+           - General factual or conversational questions
+
+Think step by step:
+1. Does this question reference a specific document or file?
+2. Does answering require private/specific information not in general knowledge?
+3. Is this a follow-up to a document-related question?
+
+If YES to any → RAG
+If NO to all → DIRECT
 
 Reply with EXACTLY one word: RAG or DIRECT. Nothing else.
 """
@@ -37,6 +53,8 @@ Conversation history:
 {history}
 
 User query: {question}
+
+Decision:
 """
 
 
@@ -59,10 +77,16 @@ class AgentRouter:
             {"question": question, "history": history}
         ).strip().upper()
 
-        if raw == "DIRECT":
+        # Extract just RAG or DIRECT in case model adds extra text
+        if "DIRECT" in raw:
             decision = RoutingDecision.DIRECT
         else:
-            decision = RoutingDecision.RAG
+            decision = RoutingDecision.RAG  # safe default
 
-        logger.info("Routing decision for %r → %s", question[:60], decision.value)
+        logger.info(
+            "Routing: %r → %s (raw=%r)",
+            question[:60],
+            decision.value,
+            raw
+        )
         return decision
