@@ -16,7 +16,7 @@ routing built with LangChain, ChromaDB, and Groq (free LLM).
 
 ## Architecture
 
-!(c:\Users\HP\Downloads\architecture.jpeg)
+![Agentic RAG Architecture](images/c:\Users\HP\Downloads\architecture.jpeg)
 
 ---
 
