@@ -216,5 +216,3 @@ malicious content in documents.
 | Python 3.11 | Language |
 
 ---
-
-Built for AllyNerds AI Engineer Assignment — April 2026
